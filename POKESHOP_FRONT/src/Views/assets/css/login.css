@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Jersey+15&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Jersey 15";
+}
+
+
+body {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(93, 107, 110);
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: -1; 
+}
+
+.background-container img {
+    position: absolute;
+    object-fit: cover; /* Changed from 'contain' to ensure full coverage */
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.container {
+    background-color: white;
+    border-radius: 20px;
+    position: absolute;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+    width: 35%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 10%;
+}
+
+.container samp {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding-left: 57px;
+    font-size: 25x;
+}
+
+.container p {
+    color: white;
+    font-size: 14px;
+    line-height: 22px;
+    margin: 20px 0;
+}
+
+.container a {
+    color: #333;
+    font-size: 14px;
+    margin: 15px 0 10px;
+}
+/*(85, 174, 252) */
+
+.container button {
+    background-color:transparent;
+    color: #202020;
+    font-size: 16px;
+    padding: 24px 100px;
+    border: 1px solid ;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+
+.container button
+:hover {
+    background-color:rgb(85, 174, 252) ;
+}
+
+.container form {
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.container input {
+    background-color: #eee;
+    border: none;
+    margin: 10px 0;
+    padding: 15px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    width: 200%;
+    outline: none;
+}
+
+.container h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.login-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.login-container h1 {
+    font-size: 50px;
+}
+.login-container p {
+    margin: 0;
+    color: #333;
+    font-size: 20px;
+}
+
+
+.social-icons {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.social-icons a {
+    border: 1px solid #ccc;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    margin: 0 10px;
+    font-size: 18px;
+}
