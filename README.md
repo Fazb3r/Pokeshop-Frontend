@@ -1,0 +1,1 @@
+Welcome to **PokéShop**, a Pokémon-themed online store! This is the front-end of the application, built with **HTML, CSS, and JavaScript**, designed to be interactive, responsive, and easily customizable.
