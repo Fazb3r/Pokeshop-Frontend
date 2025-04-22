@@ -13,7 +13,7 @@ body {
     height: 100vh;
     background-color: rgb(93, 107, 110);
     justify-content: flex-start;
-    align-items: center;    
+    align-items: center;
 }
 
 .background-container {
@@ -38,7 +38,7 @@ body {
 .container {
     background-color: white;
     border-radius: 20px;
-    position: absolute;
+    position: relative;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
     width: 35%;
@@ -46,7 +46,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-left: 10%;
+    padding-right: 10%;
 }
 
 .container samp {
@@ -121,7 +121,7 @@ body {
     margin-bottom: 20px;
 }
 
-.login-container {
+.register-container {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -132,10 +132,10 @@ body {
     justify-content: center;
     align-items: center;
 }
-.login-container h1 {
+.register-container h1 {
     font-size: 50px;
 }
-.login-container p {
+.register-container p {
     margin: 0;
     color: #333;
     font-size: 20px;

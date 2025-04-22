@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../Views/assets/css/login.css">
+    <link rel="stylesheet" href="../Views/assets/css/sing-up.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <title>POKÉSHOP LOGIN</title>
 </head>
@@ -12,15 +12,19 @@
 
 <body>  
         <div class="container" id="container">
-            <div class="login-container">
-                <div class="form-login">
+            <div class="register-container">
+                <div class="form-register">
                     <form >
                         <img src="./assets/img/pokeshop_logo.png" alt="pokeshop_logo" width="300" height="300">
                         <h1>Welcome Trainer!</h1>
-                        <p>please insert your trainer card </p>
+                        <p>please register your trainer card </p>
                         <input placeholder="Username" type="text" name="username" id="username">
                         <input placeholder="Password" type="password" name="password" id="password">
-                        <a href="sing-up.html">Register here if you don't have an account</a>
+                        <input placeholder="Seleccione el tipo de usuario" list="user-type">
+                        <datalist id="user-type">
+                            <option value="administrator"></option>
+                            <option value="client"></option>
+                        </datalist>
                         <button class="sing-ing">login</button>           
 
                     </form>
