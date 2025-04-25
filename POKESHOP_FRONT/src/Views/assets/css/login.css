@@ -69,6 +69,10 @@ body {
     font-size: 14px;
     margin: 15px 0 10px;
 }
+.container a:hover {
+    color:rgb(85, 174, 252) ;
+
+}
 /*(85, 174, 252) */
 
 .container button {
@@ -90,8 +94,7 @@ body {
 }
 
 
-.container button
-:hover {
+.container button:hover {
     background-color:rgb(85, 174, 252) ;
 }
 
@@ -146,6 +149,9 @@ body {
     margin: 20px 0;
     display: flex;
     justify-content: center;
+}
+.social-icons a:hover {
+    background-color:rgba(85, 174, 252, 0.5) ;
 }
 
 .social-icons a {
