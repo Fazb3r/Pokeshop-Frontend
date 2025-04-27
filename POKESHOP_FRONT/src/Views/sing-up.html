@@ -20,14 +20,14 @@
                         <p>please register your trainer card </p>
                         <input placeholder="Username" type="text" name="username" id="username">
                         <input placeholder="Password" type="password" name="password" id="password">
-                        <input placeholder="Seleccione el tipo de usuario" list="user-type">
-                        <datalist id="user-type">
-                            <option value="administrator"></option>
-                            <option value="client"></option>
-                        </datalist>
+                        <select name="user-type" id="user-type">
+                            <option value="" disabled selected>Seleccione el tipo de usuario</option>
+                            <option value="administrator">Administrator</option>
+                            <option value="client">Client</option>
+                        </select>
                         <a href="login.html">log in here if you already have an account</a>
 
-                        <button class="sing-ing">login</button>           
+                        <button class="sing-ing">Register</button>           
 
                     </form>
                     <div class="social-icons">
