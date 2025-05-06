@@ -1,4 +1,3 @@
-// POKESHOP_FRONT/src/scripts/signup.js
 import apiService from '../services/api.js';
 
 document.addEventListener('DOMContentLoaded', function() {

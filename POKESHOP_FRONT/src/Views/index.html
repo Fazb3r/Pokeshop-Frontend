@@ -1,64 +1,41 @@
-<!DOCTYPE html 5.0> 
-<html lang="es">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>POKÉSHOP</title>
+</head>
 
-    <!-- a;adir archivo js -->
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width-device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="../Views/assets/css/index.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-        <title>POKÉSHOP</title>
-        <link rel="stylesheet" href="index.html">
-
-    </head>
-
-    <body>
-
-        <div class="head-container">
-            <!-- Mostras codigo de los usarios con js -->
-            <div class="user-information">  
-                <p>Username: Moduspolem</p>
-                <p>Tipo de cliente: Moduspolem</p>
-            </div>
-            <img src="./assets/img/pokeshop_logo.png" alt="pokeshop_logo" width="150" height="150">
-            <h1>GOTTA BUY THEM ALL!!!</h1>
-
+<body>
+    <div class="head-container">
+        <!-- User information will be populated by JS -->
+        <div class="user-information">  
+            <p>Username: Loading...</p>
+            <p>User Type: Loading...</p>
         </div>
-        <!-- falta manejar navegacion con js  -->
-        <div class="button-container">
-            <button>AVALAIBLE PRODUCTS</button>
-            <button>PURCHASE HISTORY</button>
-            <button>LOG OUT</button>
+        <img src="./assets/img/pokeshop_logo.png" alt="pokeshop_logo">
+        <h1>GOTTA BUY THEM ALL!!!</h1>
+    </div>
 
-            <img src="./assets/img/index-rocket.png" alt="pokeshop_logo" width="150" height="150">
-        </div>
-        
-        <div class="shop-icon">
-            <img src="./assets/img/pokeball.png" alt="pokeshop_logo" width="150" height="150">
-        </div>
-        
-        <!-- En este espacio se a;aden los items con js -->
-        <div class="shop-container">
-
-            
-            <div class="pokemon-card">Placeholder</div>
-            <div class="pokemon-card">Placeholder</div>
-            <div class="pokemon-card">Placeholder</div>
-            <div class="pokemon-card">Placeholder</div>
-            <div class="pokemon-card">Placeholder</div>
-            <div class="pokemon-card">Placeholder</div>
-            <div class="pokemon-card">Placeholder</div>
-            <div class="pokemon-card">Placeholder</div>
-            <div class="pokemon-card">Placeholder</div>
-            <div class="pokemon-card">Placeholder</div>
-            <div class="pokemon-card">Placeholder</div>
-            <div class="pokemon-card">Placeholder</div>
-        </div>
-        
-
-        
-        
-        
-    </body>
+    <div class="button-container">
+        <button>AVAILABLE PRODUCTS</button>
+        <button>PURCHASE HISTORY</button>
+        <button>LOG OUT</button>
+        <img src="./assets/img/index-rocket.png" alt="Team Rocket">
+    </div>
     
+    <div class="shop-icon">
+        <img src="./assets/img/pokeball.png" alt="Shopping Cart">
+    </div>
+    
+    <div class="shop-container">
+        <!-- Pokemon products will be loaded here by JS -->
+        <div class="loading">Loading products...</div>
+    </div>
+
+    <!-- Add script with correct path -->
+    <script type="module" src="../scripts/index.js"></script>
+</body>
 </html>

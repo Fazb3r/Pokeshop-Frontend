@@ -1,4 +1,3 @@
-// POKESHOP_FRONT/src/scripts/index.js
 import apiService from '../services/api.js';
 
 // Function to check if user is logged in
@@ -43,10 +42,12 @@ const createPokemonCard = (pokemon) => {
 // Function to load Pokemon products
 const loadPokemonProducts = async () => {
     try {
+        const shopContainer = document.querySelector('.shop-container');
+        shopContainer.innerHTML = '<div class="loading">Loading products...</div>'; // Loading indicator
+        
         const pokemonList = await apiService.pokemon.getAll();
         
-        const shopContainer = document.querySelector('.shop-container');
-        shopContainer.innerHTML = ''; // Clear placeholders
+        shopContainer.innerHTML = ''; // Clear loading indicator
         
         if (pokemonList.length === 0) {
             shopContainer.innerHTML = '<p class="no-products">No Pokemon available at the moment.</p>';
@@ -62,9 +63,16 @@ const loadPokemonProducts = async () => {
         document.querySelectorAll('.add-to-cart-btn').forEach(button => {
             button.addEventListener('click', handleAddToCart);
         });
+
+        // Check if user is admin and add admin functionality
+        const userInfo = JSON.parse(localStorage.getItem('pokeShopUser'));
+        if (userInfo && userInfo.userType === 'administrator') {
+            enableAdminFeatures();
+        }
     } catch (error) {
         console.error('Error loading Pokemon products:', error);
-        alert('Failed to load products. Please try again later.');
+        const shopContainer = document.querySelector('.shop-container');
+        shopContainer.innerHTML = '<p class="no-products">Failed to load products. Please try again later.</p>';
     }
 };
 
@@ -73,12 +81,22 @@ const handleAddToCart = async (event) => {
     const pokemonId = event.target.getAttribute('data-id');
     
     try {
+        // Disable button while processing
+        event.target.disabled = true;
+        event.target.textContent = 'Adding...';
+        
         await apiService.cart.addItem(pokemonId, 1);
-        alert('Pokemon added to cart!');
-        // Optionally update cart icon or counter here
+        
+        event.target.textContent = 'Added!';
+        setTimeout(() => {
+            event.target.disabled = false;
+            event.target.textContent = 'Add to Cart';
+        }, 1500);
     } catch (error) {
         console.error('Error adding to cart:', error);
         alert(`Failed to add to cart: ${error.message}`);
+        event.target.disabled = false;
+        event.target.textContent = 'Add to Cart';
     }
 };
 
@@ -109,10 +127,15 @@ const setupCartIcon = () => {
     const cartIcon = document.querySelector('.shop-icon img');
     cartIcon.addEventListener('click', async () => {
         try {
+            cartIcon.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                cartIcon.style.transform = '';
+            }, 300);
+            
             const cart = await apiService.cart.get();
             
             // Display cart in a modal or redirect to cart page
-            if (cart.items.length === 0) {
+            if (cart.items && cart.items.length === 0) {
                 alert('Your cart is empty!');
                 return;
             }
@@ -124,9 +147,6 @@ const setupCartIcon = () => {
             });
             
             alert(cartSummary);
-            
-            // In a real implementation, you might open a modal with the cart
-            // or redirect to a dedicated cart page
         } catch (error) {
             console.error('Error fetching cart:', error);
             alert(`Failed to load cart: ${error.message}`);
@@ -134,41 +154,14 @@ const setupCartIcon = () => {
     });
 };
 
-// Initialize page
-document.addEventListener('DOMContentLoaded', async () => {
-    // Check if user is authenticated
-    if (!checkAuth()) return;
-    
-    // Display user information
-    displayUserInfo();
-    
-    // Set up navigation
-    setupNavigation();
-    
-    // Set up cart icon
-    setupCartIcon();
-    
-    // Load Pokemon products
-    await loadPokemonProducts();
-    
-    // Check if user is admin and add admin functionality if needed
-    const userInfo = JSON.parse(localStorage.getItem('pokeShopUser'));
-    if (userInfo && userInfo.userType === 'administrator') {
-        enableAdminFeatures();
-    }
-});
-
 // Function to enable admin features
 const enableAdminFeatures = () => {
-    const shopContainer = document.querySelector('.shop-container');
-    
-    // Add "Add New Pokemon" button at the top
+    // Add "Add New Pokemon" button
     const addNewButton = document.createElement('button');
     addNewButton.textContent = 'Add New Pokemon';
     addNewButton.classList.add('admin-add-button');
     addNewButton.addEventListener('click', showAddPokemonForm);
-    
-    shopContainer.parentNode.insertBefore(addNewButton, shopContainer);
+    document.body.appendChild(addNewButton);
     
     // Add edit/delete buttons to each Pokemon card
     document.querySelectorAll('.pokemon-card').forEach(card => {
@@ -195,47 +188,46 @@ const enableAdminFeatures = () => {
 
 // Function to show add Pokemon form
 const showAddPokemonForm = () => {
-    // Create a simple modal form
+    // Create a modal form
     const formHTML = `
-        <div class="pokemon-form-modal">
-            <div class="pokemon-form-content">
-                <h2>Add New Pokemon</h2>
-                <form id="add-pokemon-form">
-                    <div class="form-group">
-                        <label for="name">Name:</label>
-                        <input type="text" id="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="type">Type:</label>
-                        <input type="text" id="type" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="price">Price:</label>
-                        <input type="number" id="price" step="0.01" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="stock">Stock:</label>
-                        <input type="number" id="stock" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="image_url">Image URL:</label>
-                        <input type="text" id="image_url">
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description:</label>
-                        <textarea id="description" rows="3"></textarea>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" id="cancel-pokemon">Cancel</button>
-                        <button type="submit">Save Pokemon</button>
-                    </div>
-                </form>
-            </div>
+        <div class="pokemon-form-content">
+            <h2>Add New Pokemon</h2>
+            <form id="add-pokemon-form">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">Type:</label>
+                    <input type="text" id="type" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price:</label>
+                    <input type="number" id="price" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="stock">Stock:</label>
+                    <input type="number" id="stock" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="image_url">Image URL:</label>
+                    <input type="text" id="image_url">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancel-pokemon">Cancel</button>
+                    <button type="submit">Save Pokemon</button>
+                </div>
+            </form>
         </div>
     `;
     
     // Add form to body
     const formContainer = document.createElement('div');
+    formContainer.classList.add('pokemon-form-modal');
     formContainer.innerHTML = formHTML;
     document.body.appendChild(formContainer);
     
@@ -246,6 +238,10 @@ const showAddPokemonForm = () => {
     
     document.getElementById('add-pokemon-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        const saveButton = e.target.querySelector('button[type="submit"]');
+        saveButton.disabled = true;
+        saveButton.textContent = 'Saving...';
         
         const newPokemon = {
             name: document.getElementById('name').value,
@@ -263,100 +259,8 @@ const showAddPokemonForm = () => {
             loadPokemonProducts(); // Refresh the product list
         } catch (error) {
             alert(`Error adding Pokemon: ${error.message}`);
+            saveButton.disabled = false;
+            saveButton.textContent = 'Save Pokemon';
         }
     });
-};
-
-// Function to handle editing a Pokemon
-const handleEditPokemon = async (pokemonId) => {
-    try {
-        // Fetch current Pokemon data
-        const pokemon = await apiService.pokemon.getById(pokemonId);
-        
-        // Create edit form similar to add form but pre-populated
-        const formHTML = `
-            <div class="pokemon-form-modal">
-                <div class="pokemon-form-content">
-                    <h2>Edit Pokemon</h2>
-                    <form id="edit-pokemon-form">
-                        <div class="form-group">
-                            <label for="edit-name">Name:</label>
-                            <input type="text" id="edit-name" value="${pokemon.name}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-type">Type:</label>
-                            <input type="text" id="edit-type" value="${pokemon.type}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-price">Price:</label>
-                            <input type="number" id="edit-price" step="0.01" min="0" value="${pokemon.price}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-stock">Stock:</label>
-                            <input type="number" id="edit-stock" min="0" value="${pokemon.stock}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-image_url">Image URL:</label>
-                            <input type="text" id="edit-image_url" value="${pokemon.image_url || ''}">
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-description">Description:</label>
-                            <textarea id="edit-description" rows="3">${pokemon.description || ''}</textarea>
-                        </div>
-                        <div class="form-actions">
-                            <button type="button" id="cancel-edit">Cancel</button>
-                            <button type="submit">Update Pokemon</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        `;
-        
-        // Add form to body
-        const formContainer = document.createElement('div');
-        formContainer.innerHTML = formHTML;
-        document.body.appendChild(formContainer);
-        
-        // Add event listeners
-        document.getElementById('cancel-edit').addEventListener('click', () => {
-            document.body.removeChild(formContainer);
-        });
-        
-        document.getElementById('edit-pokemon-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const updatedPokemon = {
-                name: document.getElementById('edit-name').value,
-                type: document.getElementById('edit-type').value,
-                price: parseFloat(document.getElementById('edit-price').value),
-                stock: parseInt(document.getElementById('edit-stock').value),
-                image_url: document.getElementById('edit-image_url').value,
-                description: document.getElementById('edit-description').value
-            };
-            
-            try {
-                await apiService.pokemon.update(pokemonId, updatedPokemon);
-                alert('Pokemon updated successfully!');
-                document.body.removeChild(formContainer);
-                loadPokemonProducts(); // Refresh the product list
-            } catch (error) {
-                alert(`Error updating Pokemon: ${error.message}`);
-            }
-        });
-    } catch (error) {
-        alert(`Error fetching Pokemon data: ${error.message}`);
-    }
-};
-
-// Function to handle deleting a Pokemon
-const handleDeletePokemon = async (pokemonId) => {
-    if (confirm('Are you sure you want to delete this Pokemon?')) {
-        try {
-            await apiService.pokemon.delete(pokemonId);
-            alert('Pokemon deleted successfully!');
-            loadPokemonProducts(); // Refresh the product list
-        } catch (error) {
-            alert(`Error deleting Pokemon: ${error.message}`);
-        }
-    }
 };
