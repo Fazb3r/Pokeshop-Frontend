@@ -264,3 +264,143 @@ const showAddPokemonForm = () => {
         }
     });
 };
+
+// Function to handle editing Pokemon
+const handleEditPokemon = async (pokemonId) => {
+    try {
+        // Get the Pokemon data
+        const pokemon = await apiService.pokemon.getById(pokemonId);
+        
+        // Create modal form with pre-filled data
+        const formHTML = `
+            <div class="pokemon-form-content">
+                <h2>Edit Pokemon</h2>
+                <form id="edit-pokemon-form">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" value="${pokemon.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Type:</label>
+                        <input type="text" id="type" value="${pokemon.type}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price:</label>
+                        <input type="number" id="price" step="0.01" min="0" value="${pokemon.price}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="stock">Stock:</label>
+                        <input type="number" id="stock" min="0" value="${pokemon.stock}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="image_url">Image URL:</label>
+                        <input type="text" id="image_url" value="${pokemon.image_url || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" rows="3">${pokemon.description || ''}</textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancel-pokemon-edit">Cancel</button>
+                        <button type="submit">Update Pokemon</button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        // Add form to body
+        const formContainer = document.createElement('div');
+        formContainer.classList.add('pokemon-form-modal');
+        formContainer.innerHTML = formHTML;
+        document.body.appendChild(formContainer);
+        
+        // Add event listeners
+        document.getElementById('cancel-pokemon-edit').addEventListener('click', () => {
+            document.body.removeChild(formContainer);
+        });
+        
+        document.getElementById('edit-pokemon-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const updateButton = e.target.querySelector('button[type="submit"]');
+            updateButton.disabled = true;
+            updateButton.textContent = 'Updating...';
+            
+            const updatedPokemon = {
+                name: document.getElementById('name').value,
+                type: document.getElementById('type').value,
+                price: parseFloat(document.getElementById('price').value),
+                stock: parseInt(document.getElementById('stock').value),
+                image_url: document.getElementById('image_url').value,
+                description: document.getElementById('description').value
+            };
+            
+            try {
+                await apiService.pokemon.update(pokemonId, updatedPokemon);
+                alert('Pokemon updated successfully!');
+                document.body.removeChild(formContainer);
+                loadPokemonProducts(); // Refresh the product list
+            } catch (error) {
+                alert(`Error updating Pokemon: ${error.message}`);
+                updateButton.disabled = false;
+                updateButton.textContent = 'Update Pokemon';
+            }
+        });
+    } catch (error) {
+        console.error('Error getting Pokemon details:', error);
+        alert(`Failed to get Pokemon details: ${error.message}`);
+    }
+};
+
+// Function to handle deleting Pokemon
+const handleDeletePokemon = async (pokemonId) => {
+    // Confirm before deleting
+    if (!confirm('Are you sure you want to delete this Pokemon?')) {
+        return;
+    }
+    
+    try {
+        await apiService.pokemon.delete(pokemonId);
+        alert('Pokemon deleted successfully!');
+        loadPokemonProducts(); // Refresh the product list
+    } catch (error) {
+        console.error('Error deleting Pokemon:', error);
+        alert(`Failed to delete Pokemon: ${error.message}`);
+    }
+};
+
+function renderAdminControls() {
+    const token = localStorage.getItem('authToken');
+    if (!token) return;
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    if (payload.role === 'admin') {
+        const adminDiv = document.getElementById('admin-controls');
+        const button = document.createElement('button');
+        button.textContent = 'Añadir Producto';
+        button.onclick = () => {
+            window.location.href = 'crear_producto.html';
+        };
+        adminDiv.appendChild(button);
+    }
+}
+
+
+// Initialize functions when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is authenticated
+    if (!checkAuth()) return;
+    
+    // Display user information
+    displayUserInfo();
+    
+    // Load Pokemon products
+    loadPokemonProducts();
+    
+    // Set up navigation
+    setupNavigation();
+    
+    // Set up cart icon
+    setupCartIcon();
+});
+
