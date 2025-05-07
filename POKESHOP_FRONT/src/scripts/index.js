@@ -109,11 +109,6 @@ const setupNavigation = () => {
         loadPokemonProducts();
     });
     
-    // Purchase history button (if implemented)
-    buttons[1].addEventListener('click', () => {
-        alert('Purchase history feature coming soon!');
-    });
-    
     // Logout button
     buttons[2].addEventListener('click', () => {
         localStorage.removeItem('pokeShopToken');
@@ -122,8 +117,7 @@ const setupNavigation = () => {
     });
 };
 
-// Function to set up shopping cart icon click
-// Function to set up shopping cart icon click
+
 const setupCartIcon = () => {
     const cartIcon = document.querySelector('.shop-icon img');
     cartIcon.addEventListener('click', () => {
@@ -132,8 +126,8 @@ const setupCartIcon = () => {
             cartIcon.style.transform = '';
         }, 300);
 
-        // Redirigir directamente a la vista del carrito
-        window.location.href = './cart.html';
+        window.renderCartPanel();
+
     });
 };
 
