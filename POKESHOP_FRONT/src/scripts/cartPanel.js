@@ -33,8 +33,46 @@ document.addEventListener('DOMContentLoaded', () => {
     renderPurchaseHistoryPanel();
   };
 
+  // Function to update item quantity in the cart
+  async function updateCartItem(cartItemId, newQuantity) {
+    const token = localStorage.getItem('pokeShopToken');
+    if (!token) {
+      alert('Debes iniciar sesión');
+      return false;
+    }
+
+    try {
+      console.log(`Actualizando item ${cartItemId} a cantidad ${newQuantity}`);
+      
+      // Usar el mismo endpoint que se muestra en el código de paste.txt
+      const response = await fetch(`http://localhost:3000/api/cart/item/${cartItemId}`, {
+        method: 'PUT',  // Usar PUT en lugar de PATCH
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ quantity: parseInt(newQuantity) })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Server responded with ${response.status}: ${errorText}`);
+        throw new Error(`Error ${response.status}: ${errorText}`);
+      }
+
+      console.log('Actualización exitosa, recargando carrito');
+      // Refresh the cart after updating
+      renderCart();
+      return true;
+    } catch (error) {
+      console.error('Error updating cart item:', error);
+      alert(`Error al actualizar el carrito: ${error.message}`);
+      return false;
+    }
+  }
+
   async function renderCart() {
-    const token = localStorage.getItem('pokeShopToken'); // Using the token name from index.js
+    const token = localStorage.getItem('pokeShopToken'); 
     if (!token) {
       alert('Debes iniciar sesión');
       return;
@@ -57,6 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!data.items || data.items.length === 0) {
         cartPanel.innerHTML = '<h2>Tu carrito está vacío.</h2><button id="close-cart-btn">Cerrar</button>';
       } else {
+        console.log('Datos del carrito:', data); // Para depuración
+        
         // Calculate total and ensure price_at_time is a number
         let total = 0;
         const cartItems = data.items.map(item => {
@@ -71,11 +111,18 @@ document.addEventListener('DOMContentLoaded', () => {
           // Add to total
           total += validPrice * item.quantity;
           
-          // Return formatted HTML
+          // Identificar el ID correcto para el elemento del carrito
+          const itemId = item.cart_item_id || item.id;
+          
+          // Return formatted HTML with input for quantity
           return `
             <div style="margin-bottom: 10px; padding: 10px; border-bottom: 1px solid #ccc;">
               <strong>${item.name}</strong><br>
-              ${item.quantity} × $${validPrice.toFixed(2)} = $${(validPrice * item.quantity).toFixed(2)}
+              Cantidad: 
+              <input type="number" min="1" value="${item.quantity}" style="width:60px"
+                onchange="updateCartItem(${itemId}, this.value)">
+              <br>
+              $${validPrice.toFixed(2)} c/u → Total: $${(validPrice * item.quantity).toFixed(2)}
             </div>
           `;
         }).join('');
@@ -84,8 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <h2>Carrito de Compras</h2>
           ${cartItems}
           <p style="font-weight: bold; margin-top: 10px;">Total: $${total.toFixed(2)}</p>
-          <button id="buy-cart-btn" style="padding: 10px 20px; margin-top: 10px;">Comprar</button>
-          <button id="close-cart-btn" style="padding: 10px 20px; margin-top: 10px; margin-left: 10px;">Cerrar</button>
+          <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+            <button id="buy-cart-btn" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Comprar</button>
+            <button id="close-cart-btn" style="padding: 10px 20px; background-color: #ff5252; color: white; border: none; border-radius: 5px; cursor: pointer;">Cerrar</button>
+          </div>
         `;
       }
 
@@ -131,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Define the renderPurchaseHistoryPanel function
   window.renderPurchaseHistoryPanel = async function () {
-    const token = localStorage.getItem('pokeShopToken'); // Using the token name from index.js
+    const token = localStorage.getItem('pokeShopToken');
     if (!token) {
       alert('Debes iniciar sesión');
       return;
@@ -201,6 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   };
+
+  // Exponer la función updateCartItem globalmente
+  window.updateCartItem = updateCartItem;
 
   // Make the Pokeball (shop-icon) open the cart
   const pokeballIcon = document.querySelector('.shop-icon img');
