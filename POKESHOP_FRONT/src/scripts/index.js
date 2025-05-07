@@ -110,37 +110,54 @@ const setupNavigation = () => {
     });
     
     // Logout button
-    buttons[2].addEventListener('click', () => {
+    buttons[1].addEventListener('click', () => {
         localStorage.removeItem('pokeShopToken');
         localStorage.removeItem('pokeShopUser');
         window.location.href = 'login.html';
     });
 };
 
-
+// Set up cart icon click handler
 const setupCartIcon = () => {
     const cartIcon = document.querySelector('.shop-icon img');
-    cartIcon.addEventListener('click', () => {
-        cartIcon.style.transform = 'scale(1.2)';
-        setTimeout(() => {
-            cartIcon.style.transform = '';
-        }, 300);
-
-        window.renderCartPanel();
-
-    });
+    if (cartIcon) {
+        cartIcon.addEventListener('click', () => {
+            if (typeof window.showCartModal === 'function') {
+                window.showCartModal();
+            } else {
+                console.error('showCartModal function not found');
+            }
+        });
+    } else {
+        console.error('Cart icon not found');
+    }
 };
 
+// Make sure these functions exist in the global scope for HTML onclick attributes
+window.showCartModal = function() {
+    if (typeof window.renderCartPanel === 'function') {
+        window.renderCartPanel();
+    } else {
+        console.error('renderCartPanel function not found');
+    }
+};
+
+window.showPurchaseHistory = function() {
+    if (typeof window.renderPurchaseHistoryPanel === 'function') {
+        window.renderPurchaseHistoryPanel();
+    } else {
+        console.error('renderPurchaseHistoryPanel function not found');
+    }
+};
 
 const enableAdminFeatures = () => {
     // 1. Botón "Add New Pokemon"
+    const adminControls = document.getElementById('admin-controls');
     const addNewButton = document.createElement('button');
     addNewButton.textContent = 'Add New Pokemon';
     addNewButton.classList.add('admin-add-button');
     addNewButton.addEventListener('click', showAddPokemonForm);
-
-    const header = document.querySelector('.shop-header') || document.body;
-    header.appendChild(addNewButton); // inserta en un lugar más lógico
+    adminControls.appendChild(addNewButton);
 
     // 2. Esperar a que existan las tarjetas
     const cards = document.querySelectorAll('.pokemon-card');
@@ -168,7 +185,6 @@ const enableAdminFeatures = () => {
         card.appendChild(adminActions);
     });
 };
-
 
 // Function to show add Pokemon form
 const showAddPokemonForm = () => {
@@ -353,23 +369,6 @@ const handleDeletePokemon = async (pokemonId) => {
     }
 };
 
-function renderAdminControls() {
-    const token = localStorage.getItem('authToken');
-    if (!token) return;
-
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    if (payload.role === 'admin') {
-        const adminDiv = document.getElementById('admin-controls');
-        const button = document.createElement('button');
-        button.textContent = 'Añadir Producto';
-        button.onclick = () => {
-            window.location.href = 'crear_producto.html';
-        };
-        adminDiv.appendChild(button);
-    }
-}
-
-
 // Initialize functions when page loads
 document.addEventListener('DOMContentLoaded', () => {
     // Check if user is authenticated
@@ -387,4 +386,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set up cart icon
     setupCartIcon();
 });
-
