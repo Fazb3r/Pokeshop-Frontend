@@ -31,7 +31,7 @@ const createPokemonCard = (pokemon) => {
             <img src="${pokemon.image_url || './assets/img/pokemon-placeholder.png'}" alt="${pokemon.name}" class="pokemon-image">
             <h3>${pokemon.name}</h3>
             <p class="pokemon-type">Type: ${pokemon.type}</p>
-            <p class="pokemon-price">$${pokemon.price.toFixed(2)}</p>
+            <p class="pokemon-price">$${!isNaN(pokemon.price) ? Number(pokemon.price).toFixed(2) : "0.00"}</p>
             <p class="pokemon-stock">Stock: ${pokemon.stock}</p>
             <p class="pokemon-description">${pokemon.description || 'No description available'}</p>
             <button class="add-to-cart-btn" data-id="${pokemon.id}">Add to Cart</button>
@@ -123,68 +123,58 @@ const setupNavigation = () => {
 };
 
 // Function to set up shopping cart icon click
+// Function to set up shopping cart icon click
 const setupCartIcon = () => {
     const cartIcon = document.querySelector('.shop-icon img');
-    cartIcon.addEventListener('click', async () => {
-        try {
-            cartIcon.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                cartIcon.style.transform = '';
-            }, 300);
-            
-            const cart = await apiService.cart.get();
-            
-            // Display cart in a modal or redirect to cart page
-            if (cart.items && cart.items.length === 0) {
-                alert('Your cart is empty!');
-                return;
-            }
-            
-            // For now, just show a simple alert with cart info
-            let cartSummary = `Cart Total: $${cart.total.toFixed(2)}\n\nItems:\n`;
-            cart.items.forEach(item => {
-                cartSummary += `- ${item.name} (${item.quantity}) $${(item.price_at_time * item.quantity).toFixed(2)}\n`;
-            });
-            
-            alert(cartSummary);
-        } catch (error) {
-            console.error('Error fetching cart:', error);
-            alert(`Failed to load cart: ${error.message}`);
-        }
+    cartIcon.addEventListener('click', () => {
+        cartIcon.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+            cartIcon.style.transform = '';
+        }, 300);
+
+        // Redirigir directamente a la vista del carrito
+        window.location.href = './cart.html';
     });
 };
 
-// Function to enable admin features
+
 const enableAdminFeatures = () => {
-    // Add "Add New Pokemon" button
+    // 1. Botón "Add New Pokemon"
     const addNewButton = document.createElement('button');
     addNewButton.textContent = 'Add New Pokemon';
     addNewButton.classList.add('admin-add-button');
     addNewButton.addEventListener('click', showAddPokemonForm);
-    document.body.appendChild(addNewButton);
-    
-    // Add edit/delete buttons to each Pokemon card
-    document.querySelectorAll('.pokemon-card').forEach(card => {
+
+    const header = document.querySelector('.shop-header') || document.body;
+    header.appendChild(addNewButton); // inserta en un lugar más lógico
+
+    // 2. Esperar a que existan las tarjetas
+    const cards = document.querySelectorAll('.pokemon-card');
+    if (cards.length === 0) return; // no hay tarjetas aún
+
+    // 3. Añadir botones a cada tarjeta
+    cards.forEach(card => {
         const adminActions = document.createElement('div');
         adminActions.classList.add('admin-actions');
-        
+
         const editBtn = document.createElement('button');
         editBtn.textContent = 'Edit';
         editBtn.classList.add('admin-edit-btn');
         editBtn.dataset.id = card.dataset.id;
-        editBtn.addEventListener('click', (e) => handleEditPokemon(e.target.dataset.id));
-        
+        editBtn.addEventListener('click', () => handleEditPokemon(card.dataset.id));
+
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'Delete';
         deleteBtn.classList.add('admin-delete-btn');
         deleteBtn.dataset.id = card.dataset.id;
-        deleteBtn.addEventListener('click', (e) => handleDeletePokemon(e.target.dataset.id));
-        
+        deleteBtn.addEventListener('click', () => handleDeletePokemon(card.dataset.id));
+
         adminActions.appendChild(editBtn);
         adminActions.appendChild(deleteBtn);
         card.appendChild(adminActions);
     });
 };
+
 
 // Function to show add Pokemon form
 const showAddPokemonForm = () => {

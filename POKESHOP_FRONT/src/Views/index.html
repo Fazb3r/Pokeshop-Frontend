@@ -9,8 +9,9 @@
 </head>
 
 <body>
+  <button onclick="showCartModal()">🛒 Ver Carrito</button>
+  <button onclick="showPurchaseHistory()">📜 Historial</button>
     <div class="head-container">
-        <!-- User information will be populated by JS -->
         <div class="user-information">  
             <p>Username: Loading...</p>
             <p>User Type: Loading...</p>
@@ -21,23 +22,22 @@
 
     <div class="button-container">
         <button>AVAILABLE PRODUCTS</button>
-        <button>PURCHASE HISTORY</button>
+        <button onclick="renderPurchaseHistoryPanel()">Purchase History</button>
         <button>LOG OUT</button>
         <img src="./assets/img/index-rocket.png" alt="Team Rocket">
     </div>
     
     <div class="shop-icon">
         <img src="./assets/img/pokeball.png" alt="Shopping Cart">
-    </div>
+      </div>      
     
     <div class="shop-container">
-        <!-- Pokemon products will be loaded here by JS -->
         <div class="loading">Loading products...</div>
     </div>
-
-    <!-- Add script with correct path -->
-    <script type="module" src="../scripts/index.js"></script>
     <div id="admin-controls"></div>
 
+
+    <script src="../scripts/cartPanel.js"></script>
+    <script type="module" src="../scripts/index.js"></script>
 </body>
 </html>
