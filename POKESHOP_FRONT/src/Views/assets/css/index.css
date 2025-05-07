@@ -372,3 +372,53 @@ body {
   height: 200px;
   object-fit: cover;
 }
+
+
+.bottom-buttons {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+}
+
+.bottom-buttons button {
+    padding: 12px 20px;
+    background-color: #ff5252;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    transition: transform 0.2s, background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 180px;
+}
+
+.bottom-buttons button:hover {
+    background-color: #ff0000;
+    transform: translateY(-2px);
+}
+
+.bottom-buttons button:active {
+    transform: translateY(0);
+}
+
+.bottom-buttons button i {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+/* Si ya no necesitas estos estilos, puedes eliminarlos */
+.top-buttons {
+    display: none; /* O elimina completamente estos estilos */
+}
+
+.shop-icon {
+    display: none; /* O elimina completamente estos estilos */
+}

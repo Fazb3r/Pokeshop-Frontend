@@ -6,47 +6,13 @@
     <link rel="stylesheet" href="./assets/css/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>POKÉSHOP</title>
-    <style>
-        .top-buttons {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 10px;
-            z-index: 100;
-        }
-        
-        .top-buttons button {
-            padding: 8px 16px;
-            background-color: #ff5252;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
-        .top-buttons button:hover {
-            background-color: #ff0000;
-        }
-        
-        .shop-icon {
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        
-        .shop-icon:hover {
-            transform: scale(1.1);
-        }
-    </style>
 </head>
 
 <body>
-    <div class="top-buttons">
-        <button onclick="showCartModal()">🛒 Ver Carrito</button>
-        <button onclick="showPurchaseHistory()">📜 Historial</button>
+    <div class="bottom-buttons">
+        <button onclick="showCartModal()"><i class="fas fa-shopping-cart"></i> Ver Carrito</button>
+        <button onclick="showPurchaseHistory()"><i class="fas fa-history"></i> Historial</button>
     </div>
-    
     <div class="head-container">
         <div class="user-information">  
             <p>Username: Loading...</p>
@@ -58,22 +24,18 @@
 
     <div class="button-container">
         <button>AVAILABLE PRODUCTS</button>
-        <button>LOG OUT</button>
+        <button onclick="renderPurchaseHistoryPanel()">Purchase History</button>
+        <button onclick="">LOG OUT</button>
         <img src="./assets/img/index-rocket.png" alt="Team Rocket">
     </div>
-    
-    <div class="shop-icon">
-        <img src="./assets/img/pokeball.png" alt="Shopping Cart">
-    </div>      
     
     <div class="shop-container">
         <div class="loading">Loading products...</div>
     </div>
     <div id="admin-controls"></div>
 
-    <!-- Load non-module script first -->
+
     <script src="../scripts/cartPanel.js"></script>
-    <!-- Then load module script -->
     <script type="module" src="../scripts/index.js"></script>
 </body>
 </html>

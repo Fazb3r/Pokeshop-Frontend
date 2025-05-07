@@ -110,7 +110,7 @@ const setupNavigation = () => {
     });
     
     // Logout button
-    buttons[1].addEventListener('click', () => {
+    buttons[2].addEventListener('click', () => {
         localStorage.removeItem('pokeShopToken');
         localStorage.removeItem('pokeShopUser');
         window.location.href = 'login.html';

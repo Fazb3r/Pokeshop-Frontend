@@ -185,55 +185,75 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Debes iniciar sesión');
       return;
     }
-
+  
     try {
       cartPanel.innerHTML = '<h2>Cargando historial...</h2>';
       cartPanel.style.display = 'block';
-
+  
       const res = await fetch('http://localhost:3000/api/orders', {
         headers: { Authorization: `Bearer ${token}` }
       });
-
+  
       if (!res.ok) {
         throw new Error(`Error ${res.status}: ${await res.text()}`);
       }
-
+  
       const data = await res.json();
+      console.log('Datos recibidos del historial:', data); // Log para depuración
       
       if (!data || data.length === 0) {
         cartPanel.innerHTML = `
-          <h2>No hay historial de compras.</h2>
-          <button id="close-history-btn" style="padding: 10px 20px; margin-top: 10px;">Cerrar</button>
+          <h2>Historial de compras</h2>
+          <p>No hay historial de compras disponible.</p>
+          <button id="close-history-btn" style="padding: 8px 16px; background-color: #ff5252; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px;">Cerrar</button>
         `;
       } else {
         const orderHistory = data.map(order => {
-          // Handle potentially missing or invalid date
-          let dateDisplay = 'Fecha no disponible';
-          try {
-            dateDisplay = new Date(order.date).toLocaleString();
-          } catch (e) {
-            console.warn('Invalid date format:', order.date);
+          // Validar y formatear la fecha - Ahora buscamos created_at en lugar de date
+          let formattedDate = 'Fecha no disponible';
+          if (order.created_at) {
+            const dateObj = new Date(order.created_at);
+            if (!isNaN(dateObj.getTime())) {
+              formattedDate = dateObj.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+            }
           }
           
-          // Ensure total is a number
-          const total = typeof order.total === 'number' ? order.total : parseFloat(order.total) || 0;
+          // Validar y formatear el total - Ahora buscamos total_amount en lugar de total
+          let totalAmount = 0;
+          if (order.total_amount !== undefined && order.total_amount !== null) {
+            if (typeof order.total_amount === 'string') {
+              // Intentar extraer solo números y puntos decimales
+              const numericString = order.total_amount.replace(/[^\d.]/g, '');
+              totalAmount = parseFloat(numericString) || 0;
+            } else if (typeof order.total_amount === 'number') {
+              totalAmount = order.total_amount;
+            }
+          }
           
+          // Generar HTML para cada orden
           return `
-            <div style="margin-bottom: 10px; padding: 10px; border-bottom: 1px solid #ccc;">
-              <strong>Orden ID:</strong> ${order.id}<br>
-              <strong>Fecha:</strong> ${dateDisplay}<br>
-              <strong>Total:</strong> $${total.toFixed(2)}
+            <div style="margin-bottom: 15px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
+              <strong>Orden ID:</strong> ${order.id || 'N/A'}<br>
+              <strong>Fecha:</strong> ${formattedDate}<br>
+              <strong>Total:</strong> $${totalAmount.toFixed(2)}<br>
+              <strong>Estado:</strong> ${order.status || 'N/A'}
             </div>
           `;
         }).join('');
-
+  
         cartPanel.innerHTML = `
-          <h2>Historial de compras</h2>
+          <h2 style="text-align: center; margin-bottom: 20px;">Historial de compras</h2>
           ${orderHistory}
-          <button id="close-history-btn" style="padding: 10px 20px; margin-top: 10px;">Cerrar</button>
+          <button id="close-history-btn" style="padding: 10px 20px; background-color: #ff5252; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; display: block; width: 100px; margin-left: auto; margin-right: auto;">Cerrar</button>
         `;
       }
-
+  
       document.getElementById('close-history-btn')?.addEventListener('click', () => {
         cartPanel.style.display = 'none';
       });
@@ -242,28 +262,12 @@ document.addEventListener('DOMContentLoaded', () => {
       cartPanel.innerHTML = `
         <h2>Error al cargar el historial</h2>
         <p>${err.message || 'Ocurrió un error inesperado'}</p>
-        <button id="close-history-btn">Cerrar</button>
+        <button id="close-history-btn" style="padding: 8px 16px; background-color: #ff5252; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px;">Cerrar</button>
       `;
       
       document.getElementById('close-history-btn')?.addEventListener('click', () => {
         cartPanel.style.display = 'none';
       });
     }
-  };
-
-  // Exponer la función updateCartItem globalmente
-  window.updateCartItem = updateCartItem;
-
-  // Make the Pokeball (shop-icon) open the cart
-  const pokeballIcon = document.querySelector('.shop-icon img');
-  if (pokeballIcon) {
-    pokeballIcon.addEventListener('click', () => {
-      pokeballIcon.style.transform = 'scale(1.2)';
-      setTimeout(() => {
-        pokeballIcon.style.transform = '';
-      }, 300);
-      
-      renderCart();
-    });
   }
 });
